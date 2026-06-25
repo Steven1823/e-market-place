@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet-async';
 import { useContext, useEffect, useState } from 'react';
 import { Store } from '../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, signupOfflineUser } from '../utils';
 
 export default function SignupScreen() {
   const navigate = useNavigate();
@@ -38,7 +38,15 @@ export default function SignupScreen() {
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate(redirect || '/');
     } catch (err) {
-      toast.error(getError(err));
+      try {
+        const offlineUser = signupOfflineUser({ name, email, password });
+        ctxDispatch({ type: 'USER_SIGNIN', payload: offlineUser });
+        localStorage.setItem('userInfo', JSON.stringify(offlineUser));
+        toast.success('Account created in offline demo mode');
+        navigate(redirect || '/');
+      } catch (offlineError) {
+        toast.error(getError(err) === 'Network Error' ? offlineError.message : getError(err));
+      }
     }
   };
 

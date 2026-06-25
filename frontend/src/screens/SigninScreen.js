@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { Store } from '../Store';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, signinOfflineUser } from '../utils';
 
 export default function SigninScreen() {
   const navigate = useNavigate();
@@ -29,7 +29,15 @@ export default function SigninScreen() {
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate(redirect || '/');
     } catch (err) {
-      toast.error(getError(err));
+      try {
+        const offlineUser = signinOfflineUser({ email, password });
+        cxtDispatch({ type: 'USER_SIGNIN', payload: offlineUser });
+        localStorage.setItem('userInfo', JSON.stringify(offlineUser));
+        toast.info('Signed in using offline demo mode');
+        navigate(redirect || '/');
+      } catch (offlineError) {
+        toast.error(getError(err) === 'Network Error' ? offlineError.message : getError(err));
+      }
     }
   };
 
@@ -63,6 +71,9 @@ export default function SigninScreen() {
         </Form.Group>
         <div className="mb-3">
           <Button type="submit">Sign In</Button>
+        </div>
+        <div className="mb-3 text-muted small">
+          Demo login: `admin@example.com` / `123456` or `user@example.com` / `123456`
         </div>
         <div className="mb-3">
           New Customer ?{' '}
