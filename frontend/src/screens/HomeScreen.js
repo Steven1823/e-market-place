@@ -143,6 +143,12 @@ function HomeScreen() {
   const mensFashion = safeProducts.filter((p) => p.category === 'Men').slice(0, 4);
   const womensFashion = safeProducts.filter((p) => p.category === 'Women').slice(0, 4);
   const kidsFashion = safeProducts.filter((p) => p.category === 'Kids').slice(0, 4);
+  const categoryCards = [
+    { title: 'Men', image: '/images/p1.jpg', subtitle: 'Smart casual, streetwear and workwear', filter: 'Men' },
+    { title: 'Women', image: '/images/p2.jpg', subtitle: 'Elegant edits, dresses and premium basics', filter: 'Women' },
+    { title: 'Shoes', image: '/images/p3.jpg', subtitle: 'Sneakers, formal shoes and lifestyle picks', filter: 'Shoes' },
+    { title: 'Bags', image: '/images/p4.jpg', subtitle: 'Totes, handbags and everyday carry', filter: 'Bags' },
+  ];
 
   return (
     <div>
@@ -151,12 +157,43 @@ function HomeScreen() {
       </Helmet>
 
       <section className="hero-section mb-4">
-        <div>
+        <div className="hero-content">
           <p className="hero-kicker">Flash Fashion Kenya</p>
           <h1>Big Style Deals On Men, Women, Kids, Shoes and Bags</h1>
           <p>Shop trusted fashion picks with fast delivery across Kenya.</p>
-          <Button onClick={() => updateFilter({ category: 'Sale' })}>Shop Flash Sale</Button>
+          <div className="d-flex gap-2 flex-wrap">
+            <Button onClick={() => updateFilter({ category: 'Sale' })}>Shop Flash Sale</Button>
+            <Button variant="outline-light" onClick={() => updateFilter({ category: 'New Arrivals' })}>
+              See New Arrivals
+            </Button>
+          </div>
         </div>
+        <div className="hero-visual-grid">
+          <img src="/images/p1.jpg" alt="Men collection" />
+          <img src="/images/p2.jpg" alt="Women collection" />
+          <img src="/images/p3.jpg" alt="Shoes collection" />
+          <img src="/images/p4.jpg" alt="Bags collection" />
+        </div>
+      </section>
+
+      <section className="category-gallery mb-4">
+        <Row>
+          {categoryCards.map((item) => (
+            <Col key={item.title} md={3} sm={6} className="mb-3">
+              <button
+                type="button"
+                className="category-card"
+                onClick={() => updateFilter({ category: item.filter })}
+              >
+                <img src={item.image} alt={item.title} className="category-card-img" />
+                <div className="category-card-copy">
+                  <h3>{item.title}</h3>
+                  <p>{item.subtitle}</p>
+                </div>
+              </button>
+            </Col>
+          ))}
+        </Row>
       </section>
 
       <section className="mb-4">
@@ -300,6 +337,25 @@ function HomeScreen() {
             </Col>
           ))}
         </Row>
+      </section>
+
+      <section className="promo-banner-row mt-4">
+        <div className="promo-banner-card">
+          <p className="promo-label">Marketplace Pick</p>
+          <h3>Weekend Style Drops</h3>
+          <p>Fresh premium looks curated for Nairobi, Mombasa, Kisumu and beyond.</p>
+          <Button variant="dark" onClick={() => updateFilter({ category: 'Best Sellers' })}>
+            Shop Best Sellers
+          </Button>
+        </div>
+        <div className="promo-banner-card promo-banner-card--accent">
+          <p className="promo-label">Pay With Ease</p>
+          <h3>M-Pesa First Checkout</h3>
+          <p>Fast checkout with M-Pesa, Paystack and bank transfer confirmation support.</p>
+          <Button variant="light" onClick={() => navigate('/payment')}>
+            View Payment Options
+          </Button>
+        </div>
       </section>
 
       <section className="mt-2">

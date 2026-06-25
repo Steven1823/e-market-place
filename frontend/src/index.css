@@ -108,6 +108,10 @@ main {
   background: linear-gradient(125deg, #f68b1e 0%, #ffb560 50%, #ffe0bb 100%);
   color: #fff;
   box-shadow: 0 10px 28px rgba(17, 24, 39, 0.15);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .hero-kicker {
@@ -122,6 +126,79 @@ main {
   max-width: 720px;
   font-size: clamp(1.8rem, 4vw, 2.9rem);
   margin-bottom: 0.8rem;
+}
+
+.hero-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+}
+
+.hero-visual-grid img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16);
+}
+
+.category-card {
+  border: 1px solid var(--soft-gray);
+  background: #fff;
+  width: 100%;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  text-align: left;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.category-card-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.category-card-copy {
+  padding: 1rem;
+}
+
+.category-card-copy h3 {
+  margin-bottom: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.category-card-copy p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.promo-banner-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.promo-banner-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.35rem;
+  border: 1px solid var(--soft-gray);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+}
+
+.promo-banner-card--accent {
+  background: linear-gradient(135deg, #111827 0%, #374151 100%);
+  color: #fff;
+}
+
+.promo-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .category-chips {
@@ -363,10 +440,19 @@ main {
 @media (max-width: 768px) {
   .hero-section {
     padding: 2rem 1.1rem;
+    grid-template-columns: 1fr;
   }
 
   .product-card .card-img-top {
     height: 220px;
+  }
+
+  .hero-visual-grid img {
+    height: 140px;
+  }
+
+  .promo-banner-row {
+    grid-template-columns: 1fr;
   }
 
   .sticky-summary-card {

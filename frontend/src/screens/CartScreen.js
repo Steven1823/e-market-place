@@ -3,7 +3,6 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
-import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
@@ -91,9 +90,17 @@ export default function CartScreen() {
       <Row>
         <Col md={8}>
           {cartItems.length === 0 ? (
-            <MessageBox>
-              Cart is empty. <Link to="/">Continue shopping</Link>
-            </MessageBox>
+            <Card className="premium-card text-center p-4">
+              <Card.Body>
+                <h2 className="h4 mb-2">Your cart is empty</h2>
+                <p className="text-muted mb-3">
+                  Discover premium Kenyan fashion deals and add your favorite picks.
+                </p>
+                <Button as={Link} to="/">
+                  Continue Shopping
+                </Button>
+              </Card.Body>
+            </Card>
           ) : (
             <ListGroup>
               {cartItems.map((item, index) => (
@@ -181,6 +188,14 @@ export default function CartScreen() {
                     <Col>Delivery Fee</Col>
                     <Col className="text-end">{formatCurrencyKES(totals.deliveryFee)}</Col>
                   </Row>
+                  {shippingAddress?.deliveryOption || shippingAddress?.county ? (
+                    <Row>
+                      <Col className="text-muted small">Delivery Destination</Col>
+                      <Col className="text-end text-muted small">
+                        {shippingAddress.deliveryOption || shippingAddress.county}
+                      </Col>
+                    </Row>
+                  ) : null}
                   <Row>
                     <Col>Tax</Col>
                     <Col className="text-end">{formatCurrencyKES(totals.tax)}</Col>
@@ -193,6 +208,13 @@ export default function CartScreen() {
                     <Col>Total</Col>
                     <Col className="text-end">{formatCurrencyKES(totals.total)}</Col>
                   </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <div className="d-grid gap-2">
+                    <Button as={Link} to="/" variant="outline-dark">
+                      Continue Shopping
+                    </Button>
+                  </div>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <div className="d-grid">

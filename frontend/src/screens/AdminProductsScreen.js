@@ -30,6 +30,18 @@ const initialForm = {
   description: 'Premium fashion product',
 };
 
+const categoryOptions = [
+  'Men',
+  'Women',
+  'Kids',
+  'Shoes',
+  'Bags',
+  'Accessories',
+  'New Arrivals',
+  'Sale',
+  'Best Sellers',
+];
+
 export default function AdminProductsScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -168,7 +180,13 @@ export default function AdminProductsScreen() {
               </div>
               <div className="col-md-6">
                 <Form.Label>Category</Form.Label>
-                <Form.Control required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+                <Form.Select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                  {categoryOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </Form.Select>
               </div>
               <div className="col-md-6">
                 <Form.Label>Brand</Form.Label>
@@ -189,10 +207,27 @@ export default function AdminProductsScreen() {
               <div className="col-md-6">
                 <Form.Label>Main Image</Form.Label>
                 <Form.Control value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
+                <small className="text-muted d-block mt-1">Paste an image URL or use a public image path.</small>
               </div>
               <div className="col-md-6">
                 <Form.Label>Multiple Images (comma separated)</Form.Label>
                 <Form.Control value={form.images} onChange={(e) => setForm({ ...form, images: e.target.value })} />
+              </div>
+              <div className="col-12">
+                <div className="d-flex gap-2 flex-wrap">
+                  {(form.images ? form.images.split(',') : [form.image])
+                    .map((image) => image.trim())
+                    .filter(Boolean)
+                    .slice(0, 4)
+                    .map((image) => (
+                      <img
+                        key={image}
+                        src={image}
+                        alt="Preview"
+                        className="img-thumbnail thumb"
+                      />
+                    ))}
+                </div>
               </div>
               <div className="col-md-6">
                 <Form.Label>Sizes (comma separated)</Form.Label>

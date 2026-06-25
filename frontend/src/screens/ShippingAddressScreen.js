@@ -105,22 +105,25 @@ export default function ShippingAddressScreen() {
               required
               pattern="^\+?[0-9]{9,15}$"
               title="Enter a valid phone number"
+              placeholder="2547XXXXXXXX"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="address">
-            <Form.Label>Address</Form.Label>
+            <Form.Label>Exact Delivery Address</Form.Label>
             <Form.Control
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               required
+              placeholder="House, apartment, building, street"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="city">
-            <Form.Label>City</Form.Label>
+            <Form.Label>Town / Estate</Form.Label>
             <Form.Control
               value={city}
               onChange={(e) => setCity(e.target.value)}
               required
+              placeholder="Westlands, Syokimau, Nyali, Milimani..."
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="county">
@@ -183,6 +186,7 @@ export default function ShippingAddressScreen() {
               rows={2}
               value={deliveryNotes}
               onChange={(e) => setDeliveryNotes(e.target.value)}
+              placeholder="Landmark, gate color, preferred delivery time"
             />
           </Form.Group>
           <div className="mb-3">

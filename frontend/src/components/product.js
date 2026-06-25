@@ -97,6 +97,17 @@ function Product(props) {
           ) : null}
         </Card.Text>
         <Card.Text className="text-muted small mb-3">{product.material || 'Premium Material'}</Card.Text>
+        <div className="small text-muted mb-2">
+          Sizes: {(product.sizes || ['Standard']).slice(0, 4).join(', ')}
+        </div>
+        <div className="small text-muted mb-3">
+          Colors: {(product.colors || ['Default']).slice(0, 4).join(', ')}
+        </div>
+        <div className="mb-3">
+          <Badge bg={product.countInStock > 0 ? 'success' : 'secondary'}>
+            {product.countInStock > 0 ? `In Stock (${product.countInStock})` : 'Out of Stock'}
+          </Badge>
+        </div>
         <div className="d-grid gap-2">
           <Button variant="outline-dark" onClick={() => onQuickView?.(product)}>
             Quick View

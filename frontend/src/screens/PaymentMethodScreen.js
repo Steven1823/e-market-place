@@ -46,6 +46,7 @@ export default function PaymentMethodScreen() {
               checked={paymentMethodName === 'M-Pesa Daraja'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
+            <small className="text-muted d-block ms-4">Default Kenyan checkout with Safaricom STK push.</small>
           </div>
           <div className="mb-3">
             <Form.Check
@@ -56,6 +57,7 @@ export default function PaymentMethodScreen() {
               checked={paymentMethodName === 'Paystack'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
+            <small className="text-muted d-block ms-4">Card and digital checkout handled securely via backend initialization.</small>
           </div>
           <div className="mb-3">
             <Form.Check
@@ -66,6 +68,7 @@ export default function PaymentMethodScreen() {
               checked={paymentMethodName === 'Bank Transfer'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
+            <small className="text-muted d-block ms-4">Submit a transfer reference and await manual confirmation.</small>
           </div>
           <div className="mb-3">
             <Button type="submit">Continue</Button>
