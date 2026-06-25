@@ -9,6 +9,7 @@ import MessageBox from '../components/MessageBox';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Card from 'react-bootstrap/Card';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { formatCurrencyKES } from '../utils';
 import data from '../data';
@@ -336,16 +337,65 @@ function HomeScreen() {
 
       <section className="info-strip mt-4">
         <div>
+          <img src="/images/p1.jpg" alt="Men fashion" className="info-strip-img mb-2" />
           <h4>Men&apos;s Fashion</h4>
           <p>Streetwear, workwear and essentials curated for Kenyan style.</p>
         </div>
         <div>
+          <img src="/images/p2.jpg" alt="Women fashion" className="info-strip-img mb-2" />
           <h4>Women&apos;s Fashion</h4>
           <p>Fresh arrivals, premium fits, and trend-forward wardrobe edits.</p>
         </div>
         <div>
+          <img src="/images/p4.jpg" alt="Kids fashion" className="info-strip-img mb-2" />
           <h4>Kids&apos; Fashion</h4>
           <p>Comfortable quality clothing with fast doorstep delivery.</p>
+        </div>
+      </section>
+
+      <section className="trust-badges mt-4">
+        <div>Authentic Kenyan Fashion Sellers</div>
+        <div>M-Pesa, Paystack & Secure Payments</div>
+        <div>Fast Delivery Across Kenya</div>
+        <div>Easy Returns & Support</div>
+      </section>
+
+      <section className="mt-4">
+        <h3 className="h5">Customer Reviews</h3>
+        <Row>
+          <Col md={4} className="mb-3">
+            <Card className="premium-card h-100">
+              <Card.Body>
+                <p className="mb-2">&quot;Delivery in Nairobi was super fast and the quality is amazing.&quot;</p>
+                <small className="text-muted">Achieng, Nairobi</small>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4} className="mb-3">
+            <Card className="premium-card h-100">
+              <Card.Body>
+                <p className="mb-2">&quot;Loved the M-Pesa checkout. Simple and reliable.&quot;</p>
+                <small className="text-muted">Kevin, Nakuru</small>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4} className="mb-3">
+            <Card className="premium-card h-100">
+              <Card.Body>
+                <p className="mb-2">&quot;Great style options for kids and very responsive support on WhatsApp.&quot;</p>
+                <small className="text-muted">Faith, Mombasa</small>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </section>
+
+      <section className="newsletter-box mt-4">
+        <h3 className="h5 mb-2">Get Fashion Deals First</h3>
+        <p className="text-muted mb-3">Join our newsletter for flash sales and new arrivals.</p>
+        <div className="d-flex gap-2 flex-wrap">
+          <Form.Control type="email" placeholder="Enter your email" className="newsletter-input" />
+          <Button>Subscribe</Button>
         </div>
       </section>
 
@@ -356,7 +406,7 @@ function HomeScreen() {
         {quickViewProduct ? (
           <Modal.Body>
             <img
-              src={quickViewProduct.image}
+              src={quickViewProduct.image || '/images/amazona.jpg'}
               alt={quickViewProduct.name}
               className="img-fluid rounded mb-3"
             />

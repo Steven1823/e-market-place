@@ -30,6 +30,8 @@ import AdminProductsScreen from './screens/AdminProductsScreen';
 import AdminOrdersScreen from './screens/AdminOrdersScreen';
 
 function App() {
+  const whatsappNumber = '254702319387';
+  const whatsappHref = `https://wa.me/${whatsappNumber}`;
   const navigate = useNavigate();
   const location = useLocation();
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -66,8 +68,10 @@ function App() {
       <header>
         <div className="top-mini-bar">
           <Container className="d-flex justify-content-between">
-            <span>Call/WhatsApp: +254 700 123 456</span>
-            <span>Nationwide delivery in 24-72 hrs</span>
+            <span>Fast delivery across Kenya | Pay with M-Pesa | WhatsApp support</span>
+            <a href={whatsappHref} target="_blank" rel="noreferrer" className="topbar-whatsapp-link">
+              254702319387
+            </a>
           </Container>
         </div>
         <Navbar className="premium-nav" expand="lg" sticky="top">
@@ -169,9 +173,20 @@ function App() {
       <footer className="premium-footer text-center">
         <Container>
           <p className="mb-1">Amazona Atelier. Crafted for modern wardrobes.</p>
-          <small>Contact | Policies | Instagram | TikTok | X</small>
+          <small>
+            WhatsApp: 254702319387 | Email: support@amazona.co.ke | Policies | Nairobi, Kenya
+          </small>
         </Container>
       </footer>
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noreferrer"
+        className="floating-whatsapp-btn"
+        aria-label="Chat on WhatsApp"
+      >
+        <i className="fab fa-whatsapp"></i>
+      </a>
       <Link to="/cart" className="floating-cart-btn" aria-label="Open cart">
         <i className="fas fa-shopping-cart"></i>
         {cart.cartItems.length > 0 ? (

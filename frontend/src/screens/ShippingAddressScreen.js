@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 import { Store } from '../Store';
 import CheckoutSteps from '../components/CheckoutSteps';
+import { KENYA_COUNTIES } from '../utils';
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
@@ -18,20 +19,20 @@ export default function ShippingAddressScreen() {
   const [phone, setPhone] = useState(shippingAddress.phone || '');
   const [address, setAddress] = useState(shippingAddress.address || '');
   const [city, setCity] = useState(shippingAddress.city || '');
-  const [county, setCounty] = useState(shippingAddress.county || '');
+  const [county, setCounty] = useState(shippingAddress.county || 'Nairobi');
   const [postalCode, setPostalCode] = useState(
     shippingAddress.postalCode || ''
   );
   const [deliveryNotes, setDeliveryNotes] = useState(shippingAddress.deliveryNotes || '');
   const [deliveryOption, setDeliveryOption] = useState(
-    shippingAddress.deliveryOption || 'Nairobi Delivery'
+    shippingAddress.deliveryOption || shippingAddress.county || 'Nairobi'
   );
   useEffect(() => {
     if (!userInfo) {
       navigate('/signin?redirect=/shipping');
     }
   }, [userInfo, navigate]);
-  const [country, setCountry] = useState(shippingAddress.country || '');
+  const [country, setCountry] = useState(shippingAddress.country || 'Kenya');
   const submitHandler = (e) => {
     e.preventDefault();
     if (!/^\+?[0-9]{9,15}$/.test(phone.trim())) {
@@ -123,12 +124,25 @@ export default function ShippingAddressScreen() {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="county">
-            <Form.Label>County / State</Form.Label>
-            <Form.Control
+            <Form.Label>County</Form.Label>
+            <Form.Select
               value={county}
-              onChange={(e) => setCounty(e.target.value)}
+              onChange={(e) => {
+                const selectedCounty = e.target.value;
+                setCounty(selectedCounty);
+                if (deliveryOption !== 'Pickup') {
+                  setDeliveryOption(selectedCounty);
+                }
+              }}
               required
-            />
+            >
+              {KENYA_COUNTIES.map((countyName) => (
+                <option key={countyName} value={countyName}>
+                  {countyName}
+                </option>
+              ))}
+              <option value="Other">Other County</option>
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3" controlId="postalCode">
             <Form.Label>Postal Code</Form.Label>
@@ -152,8 +166,13 @@ export default function ShippingAddressScreen() {
               value={deliveryOption}
               onChange={(e) => setDeliveryOption(e.target.value)}
             >
-              <option value="Nairobi Delivery">Nairobi Delivery</option>
-              <option value="Outside Nairobi Delivery">Outside Nairobi Delivery</option>
+              <option value="Nairobi">Nairobi Delivery</option>
+              <option value="Kiambu">Kiambu Delivery</option>
+              <option value="Machakos">Machakos Delivery</option>
+              <option value="Mombasa">Mombasa Delivery</option>
+              <option value="Kisumu">Kisumu Delivery</option>
+              <option value="Nakuru">Nakuru Delivery</option>
+              <option value="Eldoret">Eldoret Delivery</option>
               <option value="Pickup">Pickup</option>
             </Form.Select>
           </Form.Group>

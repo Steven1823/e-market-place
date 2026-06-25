@@ -10,7 +10,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import { Store } from '../Store';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { toast } from 'react-toastify';
-import { formatCurrencyKES, getError } from '../utils';
+import { formatCurrencyKES, getDeliveryFee, getError, getProductImage } from '../utils';
 import LoadingBox from '../components/LoadingBox';
 import Form from 'react-bootstrap/Form';
 import MessageBox from '../components/MessageBox';
@@ -53,16 +53,7 @@ export default function PlaceOrderScreen() {
       0
     )
   );
-  cart.shippingPrice =
-    cart.shippingAddress.deliveryOption === 'Outside Nairobi Delivery'
-      ? round2(500)
-      : cart.shippingAddress.deliveryOption === 'Nairobi Delivery'
-      ? round2(250)
-      : cart.shippingAddress.deliveryOption === 'Pickup'
-      ? round2(0)
-      : cart.itemsPrice > 5000
-      ? round2(0)
-      : round2(350);
+  cart.shippingPrice = round2(getDeliveryFee(cart.shippingAddress || {}));
   cart.taxPrice = round2(0.03 * cart.itemsPrice);
   cart.discountAmount = round2(cart.coupon?.value || 0);
   cart.totalPrice =
@@ -210,7 +201,7 @@ export default function PlaceOrderScreen() {
                     <Row className="align-items-center">
                       <Col md={6}>
                         <img
-                          src={item.image}
+                          src={getProductImage(item.image)}
                           alt={item.name}
                           className="img-fluid rounded img-thumbnail"
                         ></img>{' '}

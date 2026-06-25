@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import axios from 'axios';
 import { Store } from '../Store';
 import { toast } from 'react-toastify';
-import { formatCurrencyKES } from '../utils';
+import { formatCurrencyKES, getProductImage } from '../utils';
 
 function Product(props) {
   const { product, onQuickView } = props;
@@ -21,10 +21,15 @@ function Product(props) {
   const isWished = wishlist.find((x) => x._id === product._id);
 
   const addToCartHandler = async (item) => {
-    const existItem = cartItems.find((x) => x._id === product._id);
+    const productKey = item._id || item.slug;
+    const existItem = cartItems.find((x) => (x._id || x.slug) === productKey);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${item._id}`);
-    if (data.countInStock < quantity) {
+    let countInStock = item.countInStock;
+    if (item._id) {
+      const { data } = await axios.get(`/api/products/${item._id}`);
+      countInStock = data.countInStock;
+    }
+    if (countInStock < quantity) {
       toast.error('Product is Out of Stock');
       return;
     }
@@ -48,11 +53,15 @@ function Product(props) {
     product.discountPrice > 0 && product.discountPrice < product.price
       ? product.discountPrice
       : product.price;
+  const discountPercent =
+    finalPrice < product.price
+      ? Math.round(((product.price - finalPrice) / product.price) * 100)
+      : 0;
 
   return (
     <Card className="h-100 product-card">
       <Link to={`/product/${product.slug}`}>
-        <img src={product.image} className="card-img-top" alt={product.name} />
+        <img src={getProductImage(product.image)} className="card-img-top" alt={product.name} />
       </Link>
 
       <Card.Body>
@@ -70,12 +79,15 @@ function Product(props) {
           </Badge>
           {finalPrice < product.price ? (
             <Badge bg="warning" text="dark">
-              Sale
+              Sale -{discountPercent}%
             </Badge>
           ) : null}
           {product.rating >= 4.6 ? <Badge bg="danger">Hot</Badge> : null}
           {product.isBestSeller ? <Badge bg="dark">Best Seller</Badge> : null}
           {product.isNewArrival ? <Badge bg="success">New</Badge> : null}
+          {product.countInStock > 0 && product.countInStock <= 5 ? (
+            <Badge bg="danger">Limited Stock</Badge>
+          ) : null}
         </div>
         <Rating rating={product.rating} numReviews={product.numReviews} />
         <Card.Text className="mb-2">

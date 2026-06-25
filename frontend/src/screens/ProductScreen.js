@@ -13,7 +13,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { formatCurrencyKES, getError } from '../utils';
+import { formatCurrencyKES, getError, getProductImage } from '../utils';
 import { Store } from '../Store';
 import Product from '../components/product';
 import { toast } from 'react-toastify';
@@ -137,15 +137,15 @@ function ProductScreen() {
         <Col md={6}>
           <img
             className="img-large"
-            src={selectedImage || product.image}
+            src={getProductImage(selectedImage || product.image)}
             alt={product.name}
             onClick={() => setShowZoom(true)}
           ></img>
           <div className="d-flex gap-2 mt-2 flex-wrap">
-            {(product.images?.length ? product.images : [product.image]).map((img) => (
+            {(product.images?.length ? product.images : [getProductImage(product.image)]).map((img) => (
               <img
                 key={img}
-                src={img}
+                src={getProductImage(img)}
                 alt={product.name}
                 className={`img-thumbnail thumb ${selectedImage === img ? 'active' : ''}`}
                 onClick={() => setSelectedImage(img)}

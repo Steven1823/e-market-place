@@ -11,13 +11,13 @@ import Card from 'react-bootstrap/Card';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
-import { formatCurrencyKES } from '../utils';
+import { formatCurrencyKES, getDeliveryFee, getProductImage } from '../utils';
 
 export default function CartScreen() {
   const navigate = useNavigate();
   const { state, dispatch: cxtDispatch } = useContext(Store);
   const {
-    cart: { cartItems, coupon },
+    cart: { cartItems, coupon, shippingAddress },
   } = state;
   const [promoCode, setPromoCode] = useState(coupon?.code || '');
 
@@ -26,12 +26,14 @@ export default function CartScreen() {
       (a, c) => a + (c.discountPrice || c.price) * c.quantity,
       0
     );
-    const deliveryFee = itemsPrice > 5000 ? 0 : 350;
+    const hasDeliverySelection =
+      Boolean(shippingAddress?.deliveryOption) || Boolean(shippingAddress?.county);
+    const deliveryFee = hasDeliverySelection ? getDeliveryFee(shippingAddress || {}) : 0;
     const discount = coupon?.value || 0;
     const tax = (itemsPrice - discount) * 0.03;
     const total = itemsPrice + deliveryFee + tax - discount;
     return { itemsPrice, deliveryFee, discount, tax, total };
-  }, [cartItems, coupon]);
+  }, [cartItems, coupon, shippingAddress]);
 
   const applyCouponHandler = () => {
     const coupons = {
@@ -99,7 +101,7 @@ export default function CartScreen() {
                   <Row className="align-items-center">
                     <Col md={4}>
                       <img
-                        src={item.image}
+                        src={getProductImage(item.image)}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
