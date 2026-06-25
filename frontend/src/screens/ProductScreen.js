@@ -17,6 +17,7 @@ import { formatCurrencyKES, getError } from '../utils';
 import { Store } from '../Store';
 import Product from '../components/product';
 import { toast } from 'react-toastify';
+import data from '../data';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -58,7 +59,16 @@ function ProductScreen() {
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
         setRelatedProducts(related.data || []);
       } catch (err) {
-        dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+        const fallbackProduct = (data.products || []).find((item) => item.slug === slug);
+        if (fallbackProduct) {
+          const fallbackRelated = (data.products || []).filter(
+            (item) => item.slug !== slug && item.category === fallbackProduct.category
+          );
+          dispatch({ type: 'FETCH_SUCCESS', payload: fallbackProduct });
+          setRelatedProducts(fallbackRelated);
+        } else {
+          dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+        }
       }
     };
     fetchData();
@@ -81,10 +91,21 @@ function ProductScreen() {
   const { state, dispatch: cxtDispatch } = useContext(Store);
   const { cart } = state;
   const addToCartHandler = async () => {
-    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const productKey = product._id || product.slug;
+    const existItem = cart.cartItems.find((x) => (x._id || x.slug) === productKey);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${product._id}`);
-    if (data.countInStock < quantity) {
+    let currentStock = product.countInStock;
+
+    if (product._id) {
+      try {
+        const { data } = await axios.get(`/api/products/${product._id}`);
+        currentStock = data.countInStock;
+      } catch (err) {
+        currentStock = product.countInStock;
+      }
+    }
+
+    if (currentStock < quantity) {
       toast.error('Product is Out of Stock');
       return;
     }

@@ -11,6 +11,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { formatCurrencyKES } from '../utils';
+import data from '../data';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -82,7 +83,7 @@ function HomeScreen() {
         }
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
-        dispatch({ type: 'FETCH_FAIL', payload: err.message });
+        dispatch({ type: 'FETCH_SUCCESS', payload: data.products || [] });
       }
     };
     fetchData();
@@ -92,17 +93,22 @@ function HomeScreen() {
         const { data } = await axios.get('/api/products/categories/list');
         setCategories(Array.isArray(data) ? data : []);
       } catch (err) {
-        setCategories([
-          'Men',
-          'Women',
-          'Kids',
-          'Shoes',
-          'Bags',
-          'Accessories',
-          'New Arrivals',
-          'Best Sellers',
-          'Sale',
-        ]);
+        setCategories(
+          Array.from(
+            new Set([
+              ...(data.products || []).map((item) => item.category),
+              'Men',
+              'Women',
+              'Kids',
+              'Shoes',
+              'Bags',
+              'Accessories',
+              'New Arrivals',
+              'Best Sellers',
+              'Sale',
+            ])
+          )
+        );
       }
     };
     fetchCategories();
