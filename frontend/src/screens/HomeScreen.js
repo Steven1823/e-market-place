@@ -75,6 +75,11 @@ function HomeScreen() {
             discount,
           },
         });
+        if (!Array.isArray(result.data)) {
+          throw new Error(
+            'Products API is not configured. Set REACT_APP_API_URL to your backend domain.'
+          );
+        }
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err.message });
@@ -85,7 +90,7 @@ function HomeScreen() {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get('/api/products/categories/list');
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch (err) {
         setCategories([
           'Men',
@@ -113,7 +118,7 @@ function HomeScreen() {
         const { data } = await axios.get('/api/products/search/suggestions', {
           params: { q: search },
         });
-        setSuggestions(data);
+        setSuggestions(Array.isArray(data) ? data : []);
       } catch (err) {
         setSuggestions([]);
       }
@@ -122,12 +127,15 @@ function HomeScreen() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const newArrivals = products.filter((p) => p.isNewArrival).slice(0, 4);
-  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 4);
-  const saleProducts = products.filter((p) => p.discountPrice > 0 && p.discountPrice < p.price).slice(0, 4);
-  const mensFashion = products.filter((p) => p.category === 'Men').slice(0, 4);
-  const womensFashion = products.filter((p) => p.category === 'Women').slice(0, 4);
-  const kidsFashion = products.filter((p) => p.category === 'Kids').slice(0, 4);
+  const safeProducts = Array.isArray(products) ? products : [];
+  const newArrivals = safeProducts.filter((p) => p.isNewArrival).slice(0, 4);
+  const bestSellers = safeProducts.filter((p) => p.isBestSeller).slice(0, 4);
+  const saleProducts = safeProducts
+    .filter((p) => p.discountPrice > 0 && p.discountPrice < p.price)
+    .slice(0, 4);
+  const mensFashion = safeProducts.filter((p) => p.category === 'Men').slice(0, 4);
+  const womensFashion = safeProducts.filter((p) => p.category === 'Women').slice(0, 4);
+  const kidsFashion = safeProducts.filter((p) => p.category === 'Kids').slice(0, 4);
 
   return (
     <div>
@@ -245,7 +253,7 @@ function HomeScreen() {
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
           <Row>
-            {products.map((product) => (
+            {safeProducts.map((product) => (
               <Col key={product.slug} sm={6} md={4} lg={3} className="mb-3">
                 <Product product={product} onQuickView={setQuickViewProduct}></Product>
               </Col>
