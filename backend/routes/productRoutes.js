@@ -66,6 +66,12 @@ productRouter.get('/', async (req, res) => {
       products = products.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
     }
 
+    if (sort === 'newest') {
+      products = products.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    }
+    if (sort === 'best-rated') {
+      products = products.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    }
     if (sort === 'price-asc') {
       products = products.sort((a, b) => a.price - b.price);
     }
@@ -113,7 +119,11 @@ productRouter.get('/', async (req, res) => {
 
     let query = Product.find(filter);
 
-    if (sort === 'price-asc') {
+    if (sort === 'newest') {
+      query = query.sort({ createdAt: -1 });
+    } else if (sort === 'best-rated') {
+      query = query.sort({ rating: -1, numReviews: -1, createdAt: -1 });
+    } else if (sort === 'price-asc') {
       query = query.sort({ price: 1 });
     } else if (sort === 'price-desc') {
       query = query.sort({ price: -1 });

@@ -47,6 +47,7 @@ function ProductScreen() {
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [showZoom, setShowZoom] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +87,7 @@ function ProductScreen() {
     } else if (product?.image) {
       setSelectedImage(product.image);
     }
+    setQuantity(1);
   }, [product]);
 
   const { state, dispatch: cxtDispatch } = useContext(Store);
@@ -93,7 +95,7 @@ function ProductScreen() {
   const addToCartHandler = async () => {
     const productKey = product._id || product.slug;
     const existItem = cart.cartItems.find((x) => (x._id || x.slug) === productKey);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const nextQuantity = existItem ? existItem.quantity + quantity : quantity;
     let currentStock = product.countInStock;
 
     if (product._id) {
@@ -105,7 +107,7 @@ function ProductScreen() {
       }
     }
 
-    if (currentStock < quantity) {
+    if (currentStock < nextQuantity) {
       toast.error('Product is Out of Stock');
       return;
     }
@@ -113,7 +115,7 @@ function ProductScreen() {
       type: 'CART_ADD_ITEM',
       payload: {
         ...product,
-        quantity,
+        quantity: nextQuantity,
         selectedSize,
         selectedColor,
       },
@@ -205,6 +207,23 @@ function ProductScreen() {
                       {color}
                     </option>
                   ))}
+                </Form.Select>
+              </Form.Group>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <Form.Group>
+                <Form.Label>Quantity</Form.Label>
+                <Form.Select
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                >
+                  {Array.from({ length: Math.max(1, product.countInStock || 1) }, (_, index) => index + 1)
+                    .slice(0, 8)
+                    .map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </ListGroup.Item>
@@ -301,9 +320,18 @@ function ProductScreen() {
           <Modal.Title>{product.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={selectedImage || product.image} alt={product.name} className="img-fluid" />
+          <img src={getProductImage(selectedImage || product.image)} alt={product.name} className="img-fluid" />
         </Modal.Body>
       </Modal>
+      {product.countInStock > 0 ? (
+        <div className="mobile-sticky-atc d-md-none">
+          <div>
+            <div className="fw-bold">{formatCurrencyKES(activePrice)}</div>
+            <small className="text-muted">{selectedSize || 'Standard'} / {selectedColor || 'Default'}</small>
+          </div>
+          <Button onClick={addToCartHandler}>Add to Cart</Button>
+        </div>
+      ) : null}
     </div>
   );
 }

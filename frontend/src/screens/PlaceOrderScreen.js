@@ -139,6 +139,24 @@ export default function PlaceOrderScreen() {
         });
       }
 
+      localStorage.setItem(
+        'lastTrackedOrder',
+        JSON.stringify({
+          _id: order._id,
+          orderStatus:
+            cart.paymentMethod === 'Bank Transfer'
+              ? 'Awaiting Confirmation'
+              : 'Pending Payment',
+          paymentStatus:
+            cart.paymentMethod === 'Bank Transfer' ? 'Pending Confirmation' : 'Pending',
+          createdAt: new Date().toISOString(),
+          totalPrice: cart.totalPrice,
+          deliveryOption: cart.shippingAddress.deliveryOption,
+          email: cart.shippingAddress.email,
+          phone: cart.shippingAddress.phone,
+        })
+      );
+
       ctxDispatch({ type: 'CART_CLEAR' });
       dispatch({ type: 'CREATE_SUCCESS' });
       localStorage.removeItem('cartItems');

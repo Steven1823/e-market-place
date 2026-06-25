@@ -7,6 +7,21 @@ import Card from 'react-bootstrap/Card';
 import { toast } from 'react-toastify';
 import { formatCurrencyKES, getError } from '../utils';
 
+const getOfflineTrackedOrder = ({ orderNumber, email, phone }) => {
+  try {
+    const savedOrder = JSON.parse(localStorage.getItem('lastTrackedOrder') || 'null');
+    if (!savedOrder) {
+      return null;
+    }
+    const matchesOrder = orderNumber ? String(savedOrder._id) === String(orderNumber) : true;
+    const matchesEmail = email ? savedOrder.email === email : true;
+    const matchesPhone = phone ? savedOrder.phone === phone : true;
+    return matchesOrder && matchesEmail && matchesPhone ? savedOrder : null;
+  } catch (error) {
+    return null;
+  }
+};
+
 export default function OrderTrackingScreen() {
   const [orderNumber, setOrderNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -30,8 +45,14 @@ export default function OrderTrackingScreen() {
       });
       setTracking(data);
     } catch (err) {
-      toast.error(getError(err));
-      setTracking(null);
+      const offlineOrder = getOfflineTrackedOrder({ orderNumber, email, phone });
+      if (offlineOrder) {
+        setTracking(offlineOrder);
+        toast.info('Showing last locally created order');
+      } else {
+        toast.error(getError(err));
+        setTracking(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -45,6 +66,9 @@ export default function OrderTrackingScreen() {
       <h1 className="h3 my-3">Track Your Order</h1>
       <Card className="premium-card mb-3">
         <Card.Body>
+          <p className="text-muted small mb-3">
+            Track using your order number, phone number, or email used at checkout.
+          </p>
           <Form onSubmit={submitHandler}>
             <Form.Group className="mb-3" controlId="orderNumber">
               <Form.Label>Order Number</Form.Label>
@@ -56,7 +80,7 @@ export default function OrderTrackingScreen() {
             </Form.Group>
             <Form.Group className="mb-3" controlId="phone">
               <Form.Label>Phone</Form.Label>
-              <Form.Control value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Form.Control value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="2547XXXXXXXX" />
             </Form.Group>
             <Button type="submit" disabled={loading}>
               {loading ? 'Tracking...' : 'Track Order'}

@@ -261,6 +261,8 @@ function HomeScreen() {
             <Form.Label>Sort</Form.Label>
             <Form.Select value={sort} onChange={(e) => updateFilter({ sort: e.target.value })}>
               <option value="popular">Popularity</option>
+              <option value="best-rated">Best Rated</option>
+              <option value="newest">Newest</option>
               <option value="price-asc">Price Low to High</option>
               <option value="price-desc">Price High to Low</option>
             </Form.Select>
