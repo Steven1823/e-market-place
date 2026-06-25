@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import seedRouter from './routes/seedRoutes.js';
 import productRouter from './routes/productRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -22,6 +23,17 @@ mongoose
   });
 const app = express();
 
+const allowedOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins.length ? allowedOrigins : true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,10 +50,12 @@ app.use('/api/mpesa', mpesaRouter);
 app.use('/api/paystack', paystackRouter);
 
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, 'frontend/build')));
-app.get('*', (req, res) =>
-  res.sendFile(path.join(__dirname, '/frontend/build/index.html'))
-);
+if (process.env.SERVE_FRONTEND === 'true') {
+  app.use(express.static(path.join(__dirname, 'frontend/build')));
+  app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '/frontend/build/index.html'))
+  );
+}
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
