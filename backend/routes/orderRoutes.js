@@ -1,6 +1,7 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import Order from '../models/orderModel.js';
+import Product from '../models/productModel.js';
 import { isAdmin, isAuth } from '../utils.js';
 
 const orderRouter = express.Router();
@@ -23,6 +24,27 @@ const enrichFallbackOrder = (order) => ({
 
 const getDefaultOrderStatus = (paymentMethod) =>
   paymentMethod === 'Bank Transfer' ? 'Awaiting Confirmation' : 'Pending Payment';
+
+const applyStockForPaidOrder = async (order) => {
+  for (const item of order.orderItems) {
+    const purchasedQty = Number(item.quantity || 0);
+    if (purchasedQty < 1) {
+      continue;
+    }
+    const product = await Product.findById(item.product);
+    if (!product) {
+      throw new Error(`${item.name || 'Product'} no longer exists`);
+    }
+    if (product.countInStock < purchasedQty) {
+      throw new Error(`${item.name || product.name} is out of stock`);
+    }
+    product.countInStock -= purchasedQty;
+    if (typeof product.stock === 'number') {
+      product.stock = Math.max(0, product.stock - purchasedQty);
+    }
+    await product.save();
+  }
+};
 
 orderRouter.post(
   '/',
@@ -233,6 +255,15 @@ orderRouter.put(
       );
     }
     if (order) {
+      if (order.isPaid) {
+        res.send({ message: 'Order already paid', order });
+        return;
+      }
+
+      if (!usingFallback) {
+        await applyStockForPaidOrder(order);
+      }
+
       order.isPaid = true;
       order.paidAt = Date.now();
       order.orderStatus = 'Paid';

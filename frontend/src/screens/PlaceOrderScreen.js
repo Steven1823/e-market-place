@@ -114,9 +114,21 @@ export default function PlaceOrderScreen() {
           phone: mpesaPhone,
           amount: cart.totalPrice,
           orderId: order._id,
+        }, {
+          headers: {
+            authorization: `Bearer ${userInfo.token}`,
+          },
         });
-        setPaymentState({ status: 'pending', message: data.message });
-        toast.info('M-Pesa STK push sent. Complete payment on your Safaricom line.');
+        const isPaid = data.status === 'success';
+        setPaymentState({
+          status: isPaid ? 'success' : 'pending',
+          message: data.message,
+        });
+        toast[isPaid ? 'success' : 'info'](
+          isPaid
+            ? 'Payment confirmed and order completed.'
+            : 'M-Pesa STK push sent. Complete payment on your Safaricom line.'
+        );
       }
 
       if (cart.paymentMethod === 'Paystack') {
@@ -124,12 +136,21 @@ export default function PlaceOrderScreen() {
           email: cart.shippingAddress.email || userInfo.email,
           amount: cart.totalPrice,
           orderId: order._id,
+        }, {
+          headers: {
+            authorization: `Bearer ${userInfo.token}`,
+          },
         });
+        const isPaid = data.status === 'success';
+        if (!isPaid && data.authorizationUrl) {
+          window.open(data.authorizationUrl, '_blank', 'noopener,noreferrer');
+        }
         setPaymentState({
-          status: 'pending',
-          message: 'Redirecting to Paystack secure checkout...',
+          status: isPaid ? 'success' : 'pending',
+          message: isPaid
+            ? data.message
+            : 'Redirecting to Paystack secure checkout...',
         });
-        window.open(data.authorizationUrl, '_blank', 'noopener,noreferrer');
       }
 
       if (cart.paymentMethod === 'Bank Transfer') {

@@ -9,8 +9,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StoreProvider } from './Store';
 
-axios.defaults.baseURL =
-  process.env.REACT_APP_API_URL || 'https://fake-api.e-market-place.local';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || '';
 
 const root = createRoot(document.getElementById('root'));
 
